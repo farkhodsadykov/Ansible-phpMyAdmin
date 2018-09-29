@@ -1,0 +1,74 @@
+--- # Author Farkhod Sadykov
+-  hosts: mysql-server
+   become: all
+   become_method: sudo
+   connection: ssh
+   vars:
+     current_password: default([])
+     new_password: Redhat2018
+   tasks:
+     - name: Download file and force basic auth
+       yum:
+         name: http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
+         state: present
+       become: yes
+
+     - name: Creating the epel-release repo for phpMyAdmin
+       yum:
+         name: http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+         state: present
+       become: yes
+
+     - name: Instlling Packages for phpMyAdmin
+       package:
+         pkg: "{{ item }}"
+         state: present
+       with_items:
+         - httpd
+         - php
+         - mysql-server
+       become: yes
+
+     - name: Install MySQL-python this is required for the task remove anonymous user
+       yum: name=MySQL-python state=present
+       become: yes
+
+     - name: Start MySQL server and enable it
+       service: name=mysqld state=started enabled=yes
+       become: yes
+
+     - name: Change root user password on first run
+       mysql_user: login_user=root login_password='' name=root password={{ new_password }} priv=*.*:ALL,GRANT host={{ item }}
+       with_items:
+         - $ansible_hostname
+         - 127.0.0.1
+         - ::1
+         - localhost
+       ignore_errors: true
+       become: yes
+
+     - name: Install Epel-Release
+       yum: name=epel-release state=present
+       become: yes
+
+     - name: Installing the phpMyAdmin
+       yum: name=phpmyadmin state=present
+       become: yes
+
+     - name: Installing the HTTP
+       yum: name=httpd state=present
+       become: yes
+
+     - name: Geting external ipaddress for phpMyAdmin configuration
+       shell: curl icanhazip.com
+       register: publicip
+       warn: False
+       delegate_to: localhost
+
+     - name: Adding the public ip to phpMyAdmin configuration file
+       replace: path=/etc/httpd/conf.d/phpMyAdmin.conf regexp='127.0.0.1' replace={{ publicip.stdout }}
+       become: yes
+
+     - name: Starting httpd and enaling
+       service: name=httpd state=started enabled=yes
+       become: yes
