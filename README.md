@@ -23,13 +23,13 @@ ansible-playbook -u root/ansible -i hosts install-mysql.yml
 ```
 ansible all -i hosts -u root -m ping
 ```
-[](https://github.com/farkhodsadykov/Ansible-phpMyAdmin/blob/master/pictures/Screen%20Shot%202018-10-02%20at%209.33.04%20PM.png)
+![](https://github.com/farkhodsadykov/Ansible-phpMyAdmin/blob/master/pictures/Screen%20Shot%202018-10-02%20at%209.33.04%20PM.png)
 
 
 ## Run the playbook
 ```
 ansible-playbook -u root -i hosts install-mysql.yml
 ```
-[](https://github.com/farkhodsadykov/Ansible-phpMyAdmin/blob/master/pictures/Screen%20Shot%202018-10-02%20at%209.30.56%20PM.png)
+![](https://github.com/farkhodsadykov/Ansible-phpMyAdmin/blob/master/pictures/Screen%20Shot%202018-10-02%20at%209.30.56%20PM.png)
 
 If you would like to change the password for MySQL,  go to `install-mysql.yml` change variable `new_passwd` to your new password. 😉
