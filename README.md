@@ -19,4 +19,16 @@ vim hosts
 ansible-playbook -u root/ansible -i hosts install-mysql.yml 
 ```
 
+## Check the hosts is pining or not 
+```
+ansible all -i hosts -u root -m ping 
+```
+
+
+## Run the playbook 
+```
+ansible-playbook -u root -i hosts install-mysql.yml 
+```
+
+
 If you would like to change the password for MySQL,  go to `install-mysql.yml` change variable `new_passwd` to your new password. 😉 

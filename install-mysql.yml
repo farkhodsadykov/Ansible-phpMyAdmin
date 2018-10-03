@@ -69,6 +69,16 @@
        replace: path=/etc/httpd/conf.d/phpMyAdmin.conf regexp='127.0.0.1' replace={{ publicip.stdout }}
        become: yes
 
+     - name: Allowing to login the from bulic ip
+       replace: path=/etc/httpd/conf.d/phpMyAdmin.conf regexp='None' replace='All'
+       become: yes
+
+     - name: Opening the port 80 for phpMyAdmin
+       shell: "{{ item }}"
+       with_items:
+         - firewall-cmd --zone=public --add-port=80/tcp --permanent
+         - firewall-cmd --reload
+
      - name: Starting httpd and enaling
        service: name=httpd state=started enabled=yes
        become: yes
